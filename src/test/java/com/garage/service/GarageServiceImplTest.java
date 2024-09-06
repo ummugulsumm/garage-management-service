@@ -1,6 +1,7 @@
 package com.garage.service;
 
-import com.garage.exception.GarageException;
+import com.garage.exception.InvalidVehicleException;
+import com.garage.exception.VehicleNotFoundException;
 import com.garage.model.VehicleModel;
 import com.garage.service.impl.GarageServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ class GarageServiceImplTest {
         vehicle.setType("Car");
         vehicle.setColor("Red");
 
-        Exception exception = assertThrows(GarageException.class, () -> garageService.park(vehicle));
+        Exception exception = assertThrows(InvalidVehicleException.class, () -> garageService.park(vehicle));
         assertTrue(exception.getMessage().contains("Invalid plate number format"));
     }
 
@@ -47,7 +48,7 @@ class GarageServiceImplTest {
 
     @Test
     void testLeaveFailure() {
-        Exception exception = assertThrows(GarageException.class, () -> garageService.leave(-1));
+        Exception exception = assertThrows(VehicleNotFoundException.class, () -> garageService.leave(-1));
         assertTrue(exception.getMessage().contains("Invalid vehicle number provided."));
     }
 

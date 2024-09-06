@@ -1,6 +1,7 @@
 package com.garage.service.impl;
 
-import com.garage.exception.GarageException;
+import com.garage.exception.InvalidVehicleException;
+import com.garage.exception.VehicleNotFoundException;
 import com.garage.model.GarageModel;
 import com.garage.model.VehicleModel;
 import com.garage.service.GarageService;
@@ -54,7 +55,7 @@ public class GarageServiceImpl implements GarageService {
 
         if (vehicleNumber <= 0 || vehicleNumber > getVehicleAndSlots().size()) {
             log.error("Invalid vehicle number: {}", vehicleNumber);
-            throw new GarageException("Invalid vehicle number provided.");
+            throw new VehicleNotFoundException("Invalid vehicle number provided.");
         }
 
         List<Integer> slots = getVehicleAndSlots().get(vehicleNumber - 1).getValue();
@@ -135,7 +136,7 @@ public class GarageServiceImpl implements GarageService {
     private void validateVehicle(VehicleModel vehicle) {
         if (vehicle == null) {
             log.error("Vehicle object is null");
-            throw new GarageException("Vehicle information is required.");
+            throw new InvalidVehicleException("Vehicle information is required.");
         }
 
         String type = vehicle.getType();
@@ -143,19 +144,19 @@ public class GarageServiceImpl implements GarageService {
 
         if (!StringUtils.hasText(type) || !StringUtils.hasText(plateNumber)) {
             log.error("Invalid vehicle type or plate number: {}", vehicle);
-            throw new GarageException("Vehicle type and plate number must be provided.");
+            throw new InvalidVehicleException("Vehicle type and plate number must be provided.");
         }
 
 
         if (!vehicleSizeMap.containsKey(type.toLowerCase())) {
             log.error("Invalid vehicle type: {}", type);
-            throw new GarageException("Invalid vehicle type: " + type + ". Allowed types are: " + vehicleSizeMap.keySet());
+            throw new InvalidVehicleException("Invalid vehicle type: " + type + ". Allowed types are: " + vehicleSizeMap.keySet());
         }
 
         String plateRegex = "^\\d{2}-[A-Z]{2,3}-\\d{4}$";
         if (!plateNumber.matches(plateRegex)) {
             log.error("Invalid plate number format: {}", plateNumber);
-            throw new GarageException("Invalid plate number format: " + plateNumber + ". Expected format is: 34-AB-1234 or 34-ABC-1234");
+            throw new InvalidVehicleException("Invalid plate number format: " + plateNumber + ". Expected format is: 34-AB-1234 or 34-ABC-1234");
         }
 
         log.info("Vehicle validation passed for: {}", vehicle);
